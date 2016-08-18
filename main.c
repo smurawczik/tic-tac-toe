@@ -1,27 +1,28 @@
+// System files
 #include <stdio.h>
 #include <stdbool.h>
 
-#define MATRIXWIDTH 3
-#define MATRIXHEIGHT 3
-#define NEWLINE '\n'
-
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_YELLOW  "\x1b[33m"
-#define ANSI_COLOR_BLUE    "\x1b[34m"
-#define ANSI_COLOR_MAGENTA "\x1b[35m"
-#define ANSI_COLOR_CYAN    "\x1b[36m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
-
+// my files
+#include "constants.h"
 #include "main.h"
+#include "win_funcs.h"
+
+void startPlaying () {
+	printf("empieza a jugar: \n");
+}
 
 void printTTTWithMatrix(int matrix[MATRIXWIDTH][MATRIXWIDTH]) {
-	printf(ANSI_COLOR_RED "%d" ANSI_COLOR_GREEN "|" ANSI_COLOR_RED "%d" ANSI_COLOR_GREEN "|" ANSI_COLOR_RED "%d" ANSI_COLOR_RESET, matrix[0][0], matrix[1][0], matrix[2][0]);
+	printf(
+			ANSI_COLOR_RED "%d" ANSI_COLOR_GREEN "|" ANSI_COLOR_RED "%d" ANSI_COLOR_GREEN "|" ANSI_COLOR_RED "%d" ANSI_COLOR_RESET,
+			matrix[0][0], matrix[1][0], matrix[2][0]);
 	printf(ANSI_COLOR_GREEN "\n-----\n" ANSI_COLOR_RESET);
-	printf(ANSI_COLOR_RED "%d" ANSI_COLOR_GREEN "|" ANSI_COLOR_RED "%d" ANSI_COLOR_GREEN "|" ANSI_COLOR_RED "%d" ANSI_COLOR_RESET, matrix[0][1], matrix[1][1], matrix[2][1]);
+	printf(
+			ANSI_COLOR_RED "%d" ANSI_COLOR_GREEN "|" ANSI_COLOR_RED "%d" ANSI_COLOR_GREEN "|" ANSI_COLOR_RED "%d" ANSI_COLOR_RESET,
+			matrix[0][1], matrix[1][1], matrix[2][1]);
 	printf(ANSI_COLOR_GREEN "\n-----\n" ANSI_COLOR_RESET);
-	printf(ANSI_COLOR_RED "%d" ANSI_COLOR_GREEN "|" ANSI_COLOR_RED "%d" ANSI_COLOR_GREEN "|" ANSI_COLOR_RED "%d" ANSI_COLOR_RESET "\n\n", matrix[0][2], matrix[1][2], matrix[2][2]);
-	printf("empieza a jugar: \n");
+	printf(
+			ANSI_COLOR_RED "%d" ANSI_COLOR_GREEN "|" ANSI_COLOR_RED "%d" ANSI_COLOR_GREEN "|" ANSI_COLOR_RED "%d" ANSI_COLOR_RESET "\n\n",
+			matrix[0][2], matrix[1][2], matrix[2][2]);
 }
 
 void changePlayer(int *player) {
@@ -49,51 +50,22 @@ bool checkForWin(int *player, int x, int y,
 		int matrix[MATRIXWIDTH][MATRIXHEIGHT]) {
 	int playerVal = *player;
 
-	// check horizontal
-	bool winCol = true;
-	for (int i = 0; i < MATRIXHEIGHT; i++) {
-		if (matrix[i][y] != playerVal) {
-			winCol = false;
-			break;
-		}
-	}
-
+	bool winCol = winWithColumn(playerVal, x, y, matrix);
 	if (winCol) {
 		return winCol;
 	}
 
-	bool winRow = true;
-	for (int i = 0; i < MATRIXWIDTH; i++) {
-		if (matrix[x][i] != playerVal) {
-			winRow = false;
-			break;
-		}
-	}
-
+	bool winRow = winWithRow(playerVal, x, y, matrix);
 	if (winRow) {
 		return winRow;
 	}
 
-	bool winDiagLR = true;
-	for (int i = 0; i < MATRIXHEIGHT; i++) {
-		if (matrix[i][i] != playerVal) {
-			winDiagLR = false;
-			break;
-		}
-	}
-
+	bool winDiagLR = winWithDiagLR(playerVal, x, y, matrix);
 	if (winDiagLR) {
 		return winDiagLR;
 	}
 
-	bool winDiagRL = true;
-	for (int i = 2; i >= 0; i--) {
-		if (matrix[i][i] != playerVal) {
-			winDiagRL = false;
-			break;
-		}
-	}
-
+	bool winDiagRL = winWithDiagRL(playerVal, x, y, matrix);
 	if (winDiagRL) {
 		return winDiagRL;
 	}
@@ -146,6 +118,7 @@ int main() {
 	int _player = 1;
 	int *player = &_player;
 
+	startPlaying();
 	printTTTWithMatrix(tictactoeMatrix);
 	askForPosition(tictactoeMatrix, player);
 
